@@ -167,22 +167,6 @@ jobs:
           committer_gist: ${{ secrets.GIST }}
 
       # ==================================
-      # News & Content
-      # ==================================
-      - name: News from hackernews
-        if: ${{ success() || failure() }}
-        uses: lowlighter/metrics@latest
-        with:
-          filename: metrics.plugin.rss.svg
-          token: NOT_NEEDED
-          base: ""
-          plugin_rss: yes
-          plugin_rss_source: https://news.ycombinator.com/rss
-          plugin_rss_limit: 4
-          output_action: gist
-          committer_gist: ${{ secrets.GIST }}
-
-      # ==================================
       # Activity & Contributions
       # ==================================
       - name: Recent activity
