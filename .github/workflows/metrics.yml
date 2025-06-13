@@ -1,8 +1,13 @@
 name: Metrics
+
 on:
+  # Run daily at midnight
   schedule: [{ cron: '0 0 * * *' }]
+  # Allow manual triggering
   workflow_dispatch:
+  # Run on pushes to main branch
   push: { branches: ['main'] }
+
 jobs:
   metrics:
     runs-on: ubuntu-latest
@@ -11,7 +16,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: general
+      # ==================================
+      # Basic Metrics
+      # ==================================
+      - name: General
         if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
@@ -20,26 +28,30 @@ jobs:
           output_action: gist
           committer_gist: ${{ secrets.GIST }}
         
+      # ==================================
+      # Calendar Views
+      # ==================================
       - name: Full-year calendar
         if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.isocalendar.fullyear.svg
           token: ${{ secrets.METRICS_TOKEN }}
-          output_action: gist
-          committer_gist: ${{ secrets.GIST }}
           base: ''
           plugin_isocalendar: yes
           plugin_isocalendar_duration: full-year
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
+      # ==================================
+      # Language Analysis
+      # ==================================
       - name: Indepth analysis
         if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.languages.indepth.svg
           token: ${{ secrets.METRICS_TOKEN }}
-          output_action: gist
-          committer_gist: ${{ secrets.GIST }}
           base: ''
           plugin_languages: yes
           plugin_languages_ignored: html, css, tex, less, dockerfile, makefile, qmake, lex, cmake, shell, gnuplot
@@ -47,7 +59,12 @@ jobs:
           plugin_languages_details: lines, bytes-size
           plugin_languages_limit: 10
           plugin_languages_analysis_timeout: 15
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
+      # ==================================
+      # Media & Entertainment
+      # ==================================
       - name: 🦑 Medias
         if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
@@ -56,8 +73,6 @@ jobs:
           token: ${{ secrets.METRICS_TOKEN }}
           base: ""
           config_order: anilist, music
-          output_action: gist
-          committer_gist: ${{ secrets.GIST }}
           plugin_anilist: yes
           plugin_anilist_medias: anime
           plugin_anilist_sections: favorites, characters
@@ -66,7 +81,12 @@ jobs:
           plugin_music: yes
           plugin_music_playlist: ${{ secrets.PLAYLIST }}
           plugin_music_limit: 9
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
+      # ==================================
+      # Achievements & Fortune
+      # ==================================
       - name: 🦑 Achievements
         if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
@@ -74,12 +94,15 @@ jobs:
           filename: achievements.svg
           token: ${{ secrets.METRICS_TOKEN }}
           base: ""
-          output_action: gist
-          committer_gist: ${{ secrets.GIST }}
           plugin_achievements: yes
           plugin_achievements_display: compact
           plugin_fortune: yes
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
+      # ==================================
+      # Sponsors & Support
+      # ==================================
       - name: 🦑 Sponsors
         if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
@@ -87,13 +110,16 @@ jobs:
           filename: sponsors.svg
           token: ${{ secrets.METRICS_TOKEN }}
           base: ""
-          output_action: gist
-          committer_gist: ${{ secrets.GIST }}
           plugin_sponsors: yes
           plugin_sponsors_past: yes
           plugin_sponsorships: yes
           plugin_sponsorships_sections: amount
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
+      # ==================================
+      # Comprehensive Profile
+      # ==================================
       - name: 🦑 General
         if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
@@ -103,8 +129,6 @@ jobs:
           base: header
           base_indepth: yes
           config_order: base.header, isocalendar, languages, notable, discussions, topics
-          output_action: gist
-          committer_gist: ${{ secrets.GIST }}
           plugin_isocalendar: yes
           plugin_languages: yes
           plugin_languages_ignored: html, css, tex, less, dockerfile, makefile, qmake, lex, cmake, shell, gnuplot, vue, scala, c, c++, python, ejs
@@ -117,16 +141,19 @@ jobs:
           plugin_topics_mode: icons
           plugin_notable: yes
           plugin_discussions: yes
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
           
+      # ==================================
+      # Gaming Stats
+      # ==================================
       - name: 🦑 Splatoon
-        uses: lowlighter/metrics@latest
         if: ${{ success() || failure() }}
+        uses: lowlighter/metrics@latest
         with:
           filename: splatoon.svg
           token: ${{ secrets.METRICS_TOKEN }}
           base: ""
-          output_action: gist
-          committer_gist: ${{ secrets.GIST }}
           plugin_splatoon: yes
           plugin_splatoon_token: ${{ secrets.SPLATOON_TOKEN }}
           plugin_splatoon_statink: yes
@@ -136,8 +163,14 @@ jobs:
           extras_css: |
             h2 { display: none !important; }
             .match:not(:last-child) { padding-bottom: 4px; }
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
+      # ==================================
+      # News & Content
+      # ==================================
       - name: News from hackernews
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.rss.svg
@@ -146,8 +179,14 @@ jobs:
           plugin_rss: yes
           plugin_rss_source: https://news.ycombinator.com/rss
           plugin_rss_limit: 4
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
+      # ==================================
+      # Activity & Contributions
+      # ==================================
       - name: Recent activity
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.activity.svg
@@ -157,8 +196,11 @@ jobs:
           plugin_activity_limit: 5
           plugin_activity_days: 0
           plugin_activity_filter: issue, pr, release, fork, review, ref/create
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
       - name: Full history calendar
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.calendar.full.svg
@@ -166,8 +208,14 @@ jobs:
           base: ""
           plugin_calendar: yes
           plugin_calendar_limit: 0
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
+      # ==================================
+      # Repository Highlights
+      # ==================================
       - name: Featured star list
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.starlists.svg
@@ -175,8 +223,11 @@ jobs:
           base: ""
           plugin_starlists: yes
           plugin_starlists_limit_repositories: 8
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
       
       - name: Featured star list languages
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.starlists.languages.svg
@@ -186,8 +237,11 @@ jobs:
           plugin_starlists_languages: yes
           plugin_starlists_limit_languages: 8
           plugin_starlists_limit_repositories: 0
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
       - name: Pinned repositories
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.repositories.pinned.svg
@@ -195,8 +249,14 @@ jobs:
           base: ""
           plugin_repositories: yes
           plugin_repositories_pinned: 2
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
+      # ==================================
+      # Community Interactions
+      # ==================================
       - name: Comment reactions
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.reactions.svg
@@ -205,8 +265,14 @@ jobs:
           plugin_reactions: yes
           plugin_reactions_limit: 100
           plugin_reactions_details: percentage
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
 
+      # ==================================
+      # Topic Icons
+      # ==================================
       - name: Icons
+        if: ${{ success() || failure() }}
         uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.topics.icons.svg
@@ -215,3 +281,5 @@ jobs:
           plugin_topics: yes
           plugin_topics_limit: 0
           plugin_topics_mode: icons
+          output_action: gist
+          committer_gist: ${{ secrets.GIST }}
